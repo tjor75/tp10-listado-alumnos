@@ -1,7 +1,7 @@
 import express  from "express"; // hacer npm i express
 import cors     from "cors";    // hacer npm i cors
-import config from './configs/db-config.js'
-import pkg from 'pg'
+import config from './configs/db-config.js';
+import pkg from 'pg';
 
 const { Client }  = pkg;
 
