@@ -6,7 +6,6 @@ const getDateOrDefault = (value, defaultValue) => {
     let date;
     try {
         date = new Date(value);
-        return date;
     } catch (e) {
         date = defaultValue;
     } finally {
