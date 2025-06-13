@@ -24,8 +24,8 @@ app.get('/api/alumnos/', async (req, res) => {
 
     try {
         await client.connect();
-        const result = await client.query(SQL);        
-        res.status(StatusCodes.OK).json(result.rows);
+        const resultPg = await client.query(SQL);
+        res.status(StatusCodes.OK).json(resultPg.rows);
     } catch (e) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
     } finally {
@@ -38,10 +38,13 @@ app.get('/api/alumnos/:id', async (req, res) => {
 
     try {
         await client.connect();
-        const result = await client.query(SQL);
+        const resultPg = await client.query(SQL, [req.params.id]);
 
-        if (result.rowCount !== 0)
-        res.status(StatusCodes.OK).json(result.rows);
+        if (resultPg.rowCount !== 0) {
+            res.status(StatusCodes.NOT_FOUND).json(resultPg.rows[0]);
+        } else {
+            res.sendStatus(StatusCodes.NOT_FOUND);
+        }
     } catch (e) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
     } finally {
