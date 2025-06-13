@@ -33,7 +33,20 @@ app.get('/api/alumnos/', async (req, res) => {
     }
 })
 app.get('/api/alumnos/:id', async (req, res) => {
-    res.sendStatus(200)
+    const SQL = `SELECT * FROM alumnos WHERE id = $1;`;
+    const client = new Client(config);
+
+    try {
+        await client.connect();
+        const result = await client.query(SQL);
+
+        if (result.rowCount !== 0)
+        res.status(StatusCodes.OK).json(result.rows);
+    } catch (e) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+    } finally {
+        await client.end();
+    }
 })
 app.post('/api/alumnos/', async (req, res) => {
     res.sendStatus(200)
