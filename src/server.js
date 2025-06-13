@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express  from "express"; // hacer npm i express
 import cors     from "cors";    // hacer npm i cors
+import { StatusCodes } from 'http-status-codes';
 import config from './configs/db-config.js';
 import pkg from 'pg';
 
@@ -18,7 +19,16 @@ app.use(express.json()); // Middleware para parsear y comprender JSON
 // (por ejemplo)
 //
 app.get('/api/alumnos/', async (req, res) => {
-    res.sendStatus(200)
+    try {
+        const client = new Client(config);
+        await client.connect();
+        const result = await client.query('SELECT * FROM alumnos;');
+        await client.end();
+        
+        res.status(StatusCodes.OK).json(result.rows);
+    } catch (e) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+    }
 })
 app.get('/api/alumnos/:id', async (req, res) => {
     res.sendStatus(200)
