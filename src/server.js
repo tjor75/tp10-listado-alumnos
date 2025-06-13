@@ -19,15 +19,17 @@ app.use(express.json()); // Middleware para parsear y comprender JSON
 // (por ejemplo)
 //
 app.get('/api/alumnos/', async (req, res) => {
+    const SQL = `SELECT * FROM alumnos;`;
+    const client = new Client(config);
+
     try {
-        const client = new Client(config);
         await client.connect();
-        const result = await client.query('SELECT * FROM alumnos;');
-        await client.end();
-        
+        const result = await client.query(SQL);        
         res.status(StatusCodes.OK).json(result.rows);
     } catch (e) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+    } finally {
+        await client.end();
     }
 })
 app.get('/api/alumnos/:id', async (req, res) => {
