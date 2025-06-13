@@ -36,9 +36,9 @@ app.get('/api/alumnos/', async (req, res) => {
 app.get('/api/alumnos/:id', async (req, res) => {
     const SQL = `SELECT * FROM alumnos WHERE id = $1;`;
     const client = new Client(config);
-    const id = getIntegerOrDefault(req.params.id, null);
+    const id = getIntegerOrDefault(req.params.id, 0);
 
-    if (id !== null) {
+    if (id > 0) {
         try {
             await client.connect();
             const resultPg = await client.query(SQL, [id]);
