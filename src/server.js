@@ -39,7 +39,7 @@ app.get('/api/alumnos/', async (req, res) => {
     }
 })
 app.get('/api/alumnos/:id', async (req, res) => {
-    const SQL = `SELECT * FROM alumnos WHERE id = $1;`;
+    const SQL = `SELECT TOP 1 * FROM alumnos WHERE id = $1;`;
     const client = new Client(config);
     const id = getIntegerOrDefault(req.params.id, 0);
 
@@ -92,7 +92,42 @@ app.post('/api/alumnos/', async (req, res) => {
     }
 })
 app.put('/api/alumnos/', async (req, res) => {
-    res.sendStatus(200)
+    const client = new Client(config);
+    const id                = getIntegerOrDefault(req.body?.id, 0);
+    const nombre            = req.body?.nombre.trim();
+    const apellido          = req.body?.apellido.trim();
+    const id_curso          = getIntegerOrDefault(req.body?.id_curso, null);
+    const fecha_nacimiento  = getDateOrDefault(req.body?.fecha_nacimiento, null);
+    const hace_deportes     = getBooleanOrDefault(req.body?.hace_deportes, null);
+
+    if (id > 0 &&
+        isNombreApellido(nombre) &&
+        isNombreApellido(apellido) &&
+        (id_curso === null || id_curso > 0)) {
+        try {
+            await client.connect();
+            const resultPg = await client.query(`SELECT TOP 1 * FROM alumnos WHERE id = $1;`, [id]);
+
+            if (resultPg.rowCount !== 0) {
+                await client.query(
+                    `UPDATE alumnos
+                        SET nombre = $2, apellido = $3, id_curso = $4, fecha_nacimiento = $5, hace_deportes = $6
+                        WHERE id = $1;`,
+                    [id, nombre, apellido, id_curso, fecha_nacimiento, hace_deportes]
+                );
+
+                res.sendStatus(StatusCodes.CREATED);
+            } else {
+                res.sendStatus(StatusCodes.NOT_FOUND);
+            }            
+        } catch (e) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+        } finally {
+            await client.end();
+        }
+    } else {
+        res.sendStatus(StatusCodes.BAD_REQUEST);
+    }
 })
 app.delete('/api/alumnos/:id', async (req, res) => {
     res.sendStatus(200)
