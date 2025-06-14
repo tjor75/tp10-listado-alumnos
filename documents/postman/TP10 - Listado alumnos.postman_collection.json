@@ -1,0 +1,133 @@
+{
+	"info": {
+		"_postman_id": "72280373-fdc3-481e-9ac3-700fd4665008",
+		"name": "[TP10] Listado alumnos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45854080"
+	},
+	"item": [
+		{
+			"name": "Obtener alumnos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/alumnos/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"alumnos",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener alumno por ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/alumnos/{{id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"alumnos",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Insertar alumno",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Guillermo\",\r\n    \"apellido\": \"Wonka\",\r\n    \"id_curso\": 2,\r\n    \"fecha_nacimiento\": \"2027-01-15\",\r\n    \"hace_deportes\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/alumnos/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"alumnos",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar alumno por ID",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 34,\r\n    \"nombre\": \"Guillermo\",\r\n    \"apellido\": \"Wonka\",\r\n    \"id_curso\": 2,\r\n    \"fecha_nacimiento\": \"2027-01-15\",\r\n    \"hace_deportes\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/alumnos/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"alumnos",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar alumno por ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/alumnos/{{id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"alumnos",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

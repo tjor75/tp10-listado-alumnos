@@ -2,10 +2,6 @@
 
 por Uriel Engelberg & Lucas Tjor
 
-## Nota
-
-Por razones de seguridad, la llave de OMDB API no se encuentra en este repositorio. Obtenga la suya en [OMDBAPI.com](https://www.omdbapi.com/)
-
 ## Requisitos
 
 * Node.js
