@@ -5,7 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import {
     getIntegerOrDefault,
     getDateOrDefault,
-    getStringOrDefault,
+    getBooleanOrDefault,
     isNombreApellido
 } from './modules/validaciones-helper.js';
 import config from './configs/db-config.js';
@@ -66,11 +66,13 @@ app.post('/api/alumnos/', async (req, res) => {
     const client = new Client(config);
     const nombre            = req.body?.nombre.trim();
     const apellido          = req.body?.apellido.trim();
-    const id_curso          = req.body?.id_curso ?? null;
-    const fecha_nacimiento  = req.body?.fecha_nacimiento ?? null;
-    const hace_deportes     = req.body?.hace_deportes ?? null;
+    const id_curso          = getIntegerOrDefault(req.body?.id_curso, null);
+    const fecha_nacimiento  = getDateOrDefault(req.body?.fecha_nacimiento, null);
+    const hace_deportes     = getBooleanOrDefault(req.body?.hace_deportes, null);
 
-    if (isNombreApellido(nombre) && isNombreApellido(apellido)) {
+    if (isNombreApellido(nombre) &&
+        isNombreApellido(apellido) &&
+        (id_curso === null || id_curso > 0)) {
         try {
             await client.connect();
             await client.query(
