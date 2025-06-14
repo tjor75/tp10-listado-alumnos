@@ -106,7 +106,7 @@ app.put('/api/alumnos/', async (req, res) => {
         (id_curso === null || id_curso > 0)) {
         try {
             await client.connect();
-            const resultPg = await client.query(`SELECT TOP 1 * FROM alumnos WHERE id = $1;`, [id]);
+            const resultPg = await client.query(`SELECT TOP 1 id FROM alumnos WHERE id = $1;`, [id]);
 
             if (resultPg.rowCount !== 0) {
                 await client.query(
@@ -130,7 +130,28 @@ app.put('/api/alumnos/', async (req, res) => {
     }
 })
 app.delete('/api/alumnos/:id', async (req, res) => {
-    res.sendStatus(200)
+    const client = new Client(config);
+    const id = getIntegerOrDefault(req.params.id, 0);
+
+    if (id > 0) {
+        try {
+            await client.connect();
+            const resultPg = await client.query(`SELECT TOP 1 id FROM alumnos WHERE id = $1;`, [id]);
+
+            if (resultPg.rowCount !== 0) {
+                await client.query(`DELETE FROM alumnos WHERE id = $1;`, [id]);
+                res.sendStatus(StatusCodes.CREATED);
+            } else {
+                res.sendStatus(StatusCodes.NOT_FOUND);
+            }            
+        } catch (e) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+        } finally {
+            await client.end();
+        }
+    } else {
+        res.sendStatus(StatusCodes.NOT_FOUND);
+    }
 })
 
 //
