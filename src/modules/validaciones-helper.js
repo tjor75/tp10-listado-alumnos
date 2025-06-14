@@ -6,6 +6,9 @@ const getDateOrDefault = (value, defaultValue) => {
     let date;
     try {
         date = new Date(value);
+
+        if (/^\d{4}-\d{2}-\d{2}/.test(value))
+            date.setDate(date.getDate() + 1);
     } catch (e) {
         date = defaultValue;
     } finally {
@@ -20,9 +23,13 @@ const getBooleanOrDefault = (value, defaultValue) => {
     const isFalse   = value.toLowerCase() === 'false' || Number(value) === 0;
     return isTrue || isFalse ? isTrue : defaultValue;
 };
+
 const isEmail = (value) => {
     const REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return REGEX.test(value);
 };
+const isNombreApellido = (value) => {
+    return value !== undefined && value.length >= 3;
+}
 
-export { getIntegerOrDefault, getDateOrDefault, getStringOrDefault, getBooleanOrDefault, isEmail };
+export { getIntegerOrDefault, getDateOrDefault, getStringOrDefault, getBooleanOrDefault, isEmail, isNombreApellido };

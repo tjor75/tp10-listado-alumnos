@@ -2,7 +2,12 @@ import 'dotenv/config';
 import express  from "express"; // hacer npm i express
 import cors     from "cors";    // hacer npm i cors
 import { StatusCodes } from 'http-status-codes';
-import { getIntegerOrDefault, getStringOrDefault } from './modules/validaciones-helper.js';
+import {
+    getIntegerOrDefault,
+    getDateOrDefault,
+    getStringOrDefault,
+    isNombreApellido
+} from './modules/validaciones-helper.js';
 import config from './configs/db-config.js';
 import pkg from 'pg';
 
@@ -58,7 +63,31 @@ app.get('/api/alumnos/:id', async (req, res) => {
     }
 })
 app.post('/api/alumnos/', async (req, res) => {
-    res.sendStatus(200)
+    const client = new Client(config);
+    const nombre            = req.body?.nombre.trim();
+    const apellido          = req.body?.apellido.trim();
+    const id_curso          = req.body?.id_curso ?? null;
+    const fecha_nacimiento  = req.body?.fecha_nacimiento ?? null;
+    const hace_deportes     = req.body?.hace_deportes ?? null;
+
+    if (isNombreApellido(nombre) && isNombreApellido(apellido)) {
+        try {
+            await client.connect();
+            await client.query(
+                `INSERT INTO alumnos (nombre, apellido, id_curso, fecha_nacimiento, hace_deportes)
+                    VALUES ($1, $2, $3, $4, $5);`,
+                [nombre, apellido, id_curso, fecha_nacimiento, hace_deportes]
+            );
+
+            res.sendStatus(StatusCodes.CREATED);
+        } catch (e) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+        } finally {
+            await client.end();
+        }
+    } else {
+        res.sendStatus(StatusCodes.BAD_REQUEST);
+    }
 })
 app.put('/api/alumnos/', async (req, res) => {
     res.sendStatus(200)
