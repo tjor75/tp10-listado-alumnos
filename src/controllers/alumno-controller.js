@@ -13,22 +13,12 @@ const { Client }  = pkg;
 const router = Router();
 
 router.get('/api/alumnos/', async (req, res) => {
-    const SQL = `SELECT * FROM alumnos;`;
-    const client = new Client(config);
-
-    try {
-        await client.connect();
-        const resultPg = await client.query(SQL);
-        res.status(StatusCodes.OK).json(resultPg.rows);
-    } catch (e) {
+    if (alumnos !== null)
+        res.status(StatusCodes.OK).json(alumnos);
+    else
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
-    } finally {
-        await client.end();
-    }
 })
 router.get('/api/alumnos/:id', async (req, res) => {
-    const SQL = `SELECT TOP 1 * FROM alumnos WHERE id = $1;`;
-    const client = new Client(config);
     const id = getIntegerOrDefault(req.params.id, 0);
 
     if (id > 0) {
