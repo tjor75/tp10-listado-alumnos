@@ -1,33 +1,30 @@
-import AlumnoRepository from "../respositories/alumno-repository";
+import AlumnoRepository from "../respositories/alumno-repository.js";
 
 const alumnoRepository = new AlumnoRepository();
+
 export default class AlumnoService {
     getAllAsync = async () => {
-        const alumnos = await alumnoRepository.getAllAsync();
-        return alumnos;
+        const returnArray = await alumnoRepository.getAllAsync();
+        return returnArray;
+    }
+    
+    getByIdAsync = async (id) => {
+        const returnEntity = await alumnoRepository.getByIdAsync(id);
+        return returnEntity;
+    }
+    
+    createAsync = async (entity) => {
+        const id = await alumnoRepository.createAsync(entity);
+        return id;
+    }
+    
+    updateAsync = async (entity) => {
+        const rowsAffected = await alumnoRepository.updateAsync(entity);
+        return rowsAffected;
     }
 
-    getIdAsync = async () => {
-        const client = new Client(config);
-        const id = getIntegerOrDefault(req.params.id, 0);
-
-        if (id > 0) {
-            try {
-                await client.connect();
-                const resultPg = await client.query(SQL, [id]);
-
-                if (resultPg.rowCount !== 0)
-                    res.status(StatusCodes.OK).json(resultPg.rows[0]);
-                else
-                    res.sendStatus(StatusCodes.NOT_FOUND);
-
-            } catch (e) {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
-            } finally {
-                await client.end();
-            }
-        } else {
-            res.sendStatus(StatusCodes.BAD_REQUEST);
-        }
+    deleteByIdAsync = async (id) => {
+        const rowsAffected = await alumnoRepository.deleteByIdAsync(id);
+        return rowsAffected;
     }
 }

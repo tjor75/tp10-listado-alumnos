@@ -15,24 +15,26 @@ const getDateOrDefault = (value, defaultValue) => {
         return date;
     }
 };
-const getStringOrDefault = (value, defaultValue) => {
-    return typeof value === 'string' ? value : defaultValue;
-};
 const getBooleanOrDefault = (value, defaultValue) => {
-    return typeof value === 'boolean' ? value : defaultValue;
-};
-const getBooleanStringOrDefault = (value, defaultValue) => {
-    const isTrue    = value.toLowerCase() === 'true'  || Number(value) === 1;
-    const isFalse   = value.toLowerCase() === 'false' || Number(value) === 0;
-    return isTrue || isFalse ? isTrue : defaultValue;
+    const isValid = value === 'true' || value === '1' || value === 'false' || value === '0';
+    return isValid ? value == true : defaultValue;
 };
 
 const isNombreApellido = (value) => {
     return value !== undefined && value.length >= 3;
 };
-const isEmail = (value) => {
-    const REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return REGEX.test(value);
+
+const validateAlumno = (alumno) => {
+    let requestError = '';
+    if (alumno.id !== undefined && alumno.id <= 0)
+        requestError += 'El id del alumno es inválido. ';
+    if (!isNombreApellido(alumno.nombre))
+        requestError += 'El nombre es inválido. ';
+    if (!isNombreApellido(alumno.apellido))
+        requestError += 'El apellido es inválido. ';
+    if (alumno.idCurso !== null && idCurso <= 0)
+        requestError += 'El id del curso es inválido. ';
+    return requestError;
 };
 
-export { getIntegerOrDefault, getDateOrDefault, getStringOrDefault, getBooleanOrDefault, isEmail, isNombreApellido };
+export { getIntegerOrDefault, getDateOrDefault, getBooleanOrDefault, isNombreApellido, validateAlumno };

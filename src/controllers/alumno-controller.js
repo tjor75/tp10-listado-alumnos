@@ -1,134 +1,117 @@
-import pkg from 'pg';
 import { Router } from "express";
 import { StatusCodes } from 'http-status-codes';
-import config from './configs/db-config.js';
-import {
-    getIntegerOrDefault,
-    getDateOrDefault,
-    getBooleanOrDefault,
-    isNombreApellido
-} from './modules/validaciones-helper.js';
+import { getIntegerOrDefault, getDateOrDefault, getBooleanOrDefault, isNombreApellido } from '../modules/validaciones-helper.js';
+import AlumnoService from '../services/alumno-service.js';
 
-const { Client }  = pkg;
 const router = Router();
+const alumnoService = new AlumnoService();
 
-router.get('/api/alumnos/', async (req, res) => {
+router.get('/', async (req, res) => {
+    const alumnos = await alumnoService.getAllAsync();
+
     if (alumnos !== null)
         res.status(StatusCodes.OK).json(alumnos);
     else
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: internalError });
 })
-router.get('/api/alumnos/:id', async (req, res) => {
-    const id = getIntegerOrDefault(req.params.id, 0);
+
+router.get('/:id', async (req, res) => {
+    const id = getIntegerOrDefault(req.params?.id, 0);
+    let alumno;
 
     if (id > 0) {
         try {
-            await client.connect();
-            const resultPg = await client.query(SQL, [id]);
-
-            if (resultPg.rowCount !== 0)
-                res.status(StatusCodes.OK).json(resultPg.rows[0]);
+            alumno = await alumnoService.getByIdAsync(id);
+            if (alumno !== null)
+                res.status(StatusCodes.OK).json(alumno);
             else
                 res.sendStatus(StatusCodes.NOT_FOUND);
-
-        } catch (e) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
-        } finally {
-            await client.end();
+            
+        } catch (internalError) {
+            console.error(internalError);
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: internalError });
         }
     } else {
         res.sendStatus(StatusCodes.BAD_REQUEST);
     }
 })
-router.post('/api/alumnos/', async (req, res) => {
-    const client = new Client(config);
-    const nombre            = req.body?.nombre.trim();
-    const apellido          = req.body?.apellido.trim();
-    const id_curso          = getIntegerOrDefault(req.body?.id_curso, null);
-    const fecha_nacimiento  = getDateOrDefault(req.body?.fecha_nacimiento, null);
-    const hace_deportes     = getBooleanOrDefault(req.body?.hace_deportes, null);
 
-    if (isNombreApellido(nombre) &&
-        isNombreApellido(apellido) &&
-        (id_curso === null || id_curso > 0)) {
+router.post('/', async (req, res) => {
+    const alumno = {
+        nombre:             req.body?.nombre    ?? null,
+        apellido:           req.body?.apellido  ?? null,
+        idCurso:            getIntegerOrDefault(req.body?.id_curso, null),
+        fechaNacimiento:    getDateOrDefault(req.body?.fecha_nacimiento, null),
+        haceDeportes:       getBooleanOrDefault(req.body?.hace_deportes, null)
+    };
+    const requestError = validateAlumno(alumno);
+    
+    if (requestError !== '') {
         try {
-            await client.connect();
-            await client.query(
-                `INSERT INTO alumnos (nombre, apellido, id_curso, fecha_nacimiento, hace_deportes)
-                    VALUES ($1, $2, $3, $4, $5);`,
-                [nombre, apellido, id_curso, fecha_nacimiento, hace_deportes]
-            );
+            const id = await alumnoService.createAsync(alumno);
 
-            res.sendStatus(StatusCodes.CREATED);
-        } catch (e) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
-        } finally {
-            await client.end();
-        }
-    } else {
-        res.sendStatus(StatusCodes.BAD_REQUEST);
-    }
-})
-router.put('/api/alumnos/', async (req, res) => {
-    const client = new Client(config);
-    const id                = getIntegerOrDefault(req.body?.id, 0);
-    const nombre            = req.body?.nombre.trim();
-    const apellido          = req.body?.apellido.trim();
-    const id_curso          = getIntegerOrDefault(req.body?.id_curso, null);
-    const fecha_nacimiento  = getDateOrDefault(req.body?.fecha_nacimiento, null);
-    const hace_deportes     = getBooleanOrDefault(req.body?.hace_deportes, null);
-
-    if (id > 0 &&
-        isNombreApellido(nombre) &&
-        isNombreApellido(apellido) &&
-        (id_curso === null || id_curso > 0)) {
-        try {
-            await client.connect();
-            const resultPg = await client.query(`SELECT TOP 1 id FROM alumnos WHERE id = $1;`, [id]);
-
-            if (resultPg.rowCount !== 0) {
-                await client.query(
-                    `UPDATE alumnos
-                        SET nombre = $2, apellido = $3, id_curso = $4, fecha_nacimiento = $5, hace_deportes = $6
-                        WHERE id = $1;`,
-                    [id, nombre, apellido, id_curso, fecha_nacimiento, hace_deportes]
-                );
-
+            if (id !== null)
                 res.sendStatus(StatusCodes.CREATED);
+            else
+                res.sendStatus(StatusCodes.BAD_REQUEST);
+        } catch (internalError) {
+            console.error(internalError);
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: internalError });
+        }
+    } else {
+        res.status(StatusCodes.BAD_REQUEST).send(requestError);
+    }
+})
+
+router.put('/', async (req, res) => {
+    let rowsAffected;
+    const alumno = {
+        id:                 getIntegerOrDefault(req.body?.id, 0),
+        nombre:             req.body?.nombre ?? null,
+        apellido:           req.body?.apellido ?? null,
+        idCurso:            getIntegerOrDefault(req.body?.id_curso, null),
+        fechaNacimiento:    getDateOrDefault(req.body?.fecha_nacimiento, null),
+        haceDeportes:       getBooleanOrDefault(req.body?.hace_deportes, null)
+    };
+    const requestError = validateAlumno(alumno);
+
+    if (requestError === '') {
+        try {
+            rowsAffected = alumnoService.updateAsync(alumno);
+
+            if (rowsAffected > 0) {
+                res.sendStatus(StatusCodes.OK);
             } else {
                 res.sendStatus(StatusCodes.NOT_FOUND);
-            }            
-        } catch (e) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
-        } finally {
-            await client.end();
+            }
+        } catch (internalError) {
+            console.error(internalError);
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: internalError });
         }
     } else {
-        res.sendStatus(StatusCodes.BAD_REQUEST);
+        res.status(StatusCodes.BAD_REQUEST).send(requestError);
     }
 })
-router.delete('/api/alumnos/:id', async (req, res) => {
-    const client = new Client(config);
+
+router.delete('/:id', async (req, res) => {
+    let rowsAffected;
     const id = getIntegerOrDefault(req.params.id, 0);
 
     if (id > 0) {
         try {
-            await client.connect();
-            const resultPg = await client.query(`SELECT TOP 1 id FROM alumnos WHERE id = $1;`, [id]);
+            rowsAffected = await alumnoService.deleteByIdAsync(id);
 
-            if (resultPg.rowCount !== 0) {
-                await client.query(`DELETE FROM alumnos WHERE id = $1;`, [id]);
-                res.sendStatus(StatusCodes.CREATED);
+            if (rowsAffected > 0) {
+                res.sendStatus(StatusCodes.OK);
             } else {
                 res.sendStatus(StatusCodes.NOT_FOUND);
-            }            
-        } catch (e) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
-        } finally {
-            await client.end();
+            }
+        } catch (internalError) {
+            console.error(internalError);
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: internalError });
         }
     } else {
-        res.sendStatus(StatusCodes.NOT_FOUND);
+        res.status(StatusCodes.BAD_REQUEST).send('El id del alumno es inválido.');
     }
 })
 

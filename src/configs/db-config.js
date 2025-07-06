@@ -1,7 +1,7 @@
-let config;
+let DBConfig;
 
 if (!process.env.POSTGRES_STRING) {
-    config = {
+    DBConfig = {
         host        : process.env.POSTGRES_HOST     ?? "",
         database    : process.env.POSTGRES_DATABASE ?? "",
         user        : process.env.POSTGRES_USER     ?? "",
@@ -9,7 +9,7 @@ if (!process.env.POSTGRES_STRING) {
         port        : process.env.POSTGRES_PORT     ?? 5432
     };
 } else {
-    config = { connectionString: process.env.POSTGRES_STRING };
+    DBConfig = { connectionString: process.env.POSTGRES_STRING };
 }
 
-export default config;
+export default DBConfig;
