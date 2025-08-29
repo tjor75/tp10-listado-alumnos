@@ -11,7 +11,7 @@ por Uriel Engelberg & Lucas Tjor
 
 1. Cree una base de datos en un servidor PostgreSQL. Puede llamarla como quiera.
 
-2. Agregue tablas y datos corriendo las consultas de `documents/database/script-postgress.sql` en la base de datos.
+2. Agregue tablas y datos corriendo las consultas de `documents/database/script-postgres.sql` en la base de datos.
 
 3. Instale los módulos necesarios con `npm install`.
 
