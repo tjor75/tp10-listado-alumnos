@@ -98,39 +98,6 @@ router.put('/', async (req, res) => {
     }
 })
 
-router.put('/', async (req, res) => {
-    const id                = getIntegerOrDefault(req.body?.id, 0);
-    const nombre            = req.body?.nombre.trim();
-    const apellido          = req.body?.apellido.trim();
-    const id_curso          = getIntegerOrDefault(req.body?.id_curso, null);
-    const fecha_nacimiento  = getDateOrDefault(req.body?.fecha_nacimiento, null);
-    const hace_deportes     = getBooleanOrDefault(req.body?.hace_deportes, null);
-
-    if (id > 0 &&
-        isNombreApellido(nombre) &&
-        isNombreApellido(apellido) &&
-        (id_curso === null || id_curso > 0)) {
-        try {
-            const result = await alumnosService.updateAsync(id, {
-                nombre,
-                apellido,
-                id_curso,
-                fecha_nacimiento,
-                hace_deportes
-            });
-            if (result) {
-                res.sendStatus(StatusCodes.CREATED);
-            } else {
-                res.sendStatus(StatusCodes.NOT_FOUND);
-            }
-        } catch (e) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(e);
-        }
-    } else {
-        res.sendStatus(StatusCodes.BAD_REQUEST);
-    }
-})
-
 router.delete('/:id', async (req, res) => {
     const id = getIntegerOrDefault(req.params.id, 0);
 
