@@ -22,7 +22,7 @@ class AlumnosService {
         if (!entity) return false;
 
         for (const key in entityUpdate) {
-            if (entityUpdate[key] !== entity[key])
+            if (entityUpdate[key] !== entity[key] && typeof entityUpdate[key] !== 'undefined')
                 entity[key] = entityUpdate[key];
         }
 

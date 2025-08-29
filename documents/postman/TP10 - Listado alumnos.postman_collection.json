@@ -12,12 +12,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/alumnos/",
-					"protocol": "http",
+					"raw": "{{baseURL}}/api/alumnos/",
 					"host": [
-						"localhost"
+						"{{baseURL}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"alumnos",
@@ -33,12 +31,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/alumnos/{{id}}",
-					"protocol": "http",
+					"raw": "{{baseURL}}/api/alumnos/{{id}}",
 					"host": [
-						"localhost"
+						"{{baseURL}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"alumnos",
@@ -63,12 +59,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/alumnos/",
-					"protocol": "http",
+					"raw": "{{baseURL}}/api/alumnos/",
 					"host": [
-						"localhost"
+						"{{baseURL}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"alumnos",
@@ -79,7 +73,7 @@
 			"response": []
 		},
 		{
-			"name": "Actualizar alumno por ID",
+			"name": "Actualizar alumno",
 			"request": {
 				"method": "PUT",
 				"header": [],
@@ -93,12 +87,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/alumnos/",
-					"protocol": "http",
+					"raw": "{{baseURL}}/api/alumnos/",
 					"host": [
-						"localhost"
+						"{{baseURL}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"alumnos",
@@ -114,12 +106,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/alumnos/{{id}}",
-					"protocol": "http",
+					"raw": "{{baseURL}}/api/alumnos/{{id}}",
 					"host": [
-						"localhost"
+						"{{baseURL}}"
 					],
-					"port": "3000",
 					"path": [
 						"api",
 						"alumnos",
@@ -128,6 +118,43 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Subir foto de alumno",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "imagen",
+							"type": "file",
+							"src": "postman-cloud:///1f08514a-6b4e-4b00-9dda-391a029118f3"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/alumnos/{{id}}/foto",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"alumnos",
+						"{{id}}",
+						"foto"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
 		}
 	]
 }

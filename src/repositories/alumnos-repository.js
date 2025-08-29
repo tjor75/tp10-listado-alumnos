@@ -19,8 +19,8 @@ class AlumnosRepository {
     }
 
     async createAsync(entity) {
-        const sql = `INSERT INTO alumnos (nombre, apellido, id_curso, fecha_nacimiento, hace_deportes)
-                     VALUES ($1, $2, $3, $4, $5);`;
+        const sql = `INSERT INTO alumnos (nombre, apellido, id_curso, fecha_nacimiento, hace_deportes, foto)
+                     VALUES ($1, $2, $3, $4, $5, NULL);`;
         const resultPg = await this.pool.query(sql, [
             entity.nombre,
             entity.apellido,
@@ -32,7 +32,13 @@ class AlumnosRepository {
     }
 
     async updateAsync(entity) {
-        const sql = `UPDATE alumnos SET nombre = $2, apellido = $3, id_curso = $4, fecha_nacimiento = $5, hace_deportes = $6
+        const sql = `UPDATE alumnos SET
+                         nombre = $2,
+                         apellido = $3,
+                         id_curso = $4,
+                         fecha_nacimiento = $5,
+                         hace_deportes = $6,
+                         foto = $7
                      WHERE id = $1;`;
         const resultPg = await this.pool.query(sql, [
             entity.id,
@@ -40,7 +46,8 @@ class AlumnosRepository {
             entity.apellido,
             entity.id_curso,
             entity.fecha_nacimiento,
-            entity.hace_deportes
+            entity.hace_deportes,
+            entity.foto
         ]);
         return resultPg.rowCount > 0;
     }
