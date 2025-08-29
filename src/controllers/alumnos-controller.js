@@ -1,4 +1,3 @@
-import path from "path";
 import { Router } from "express";
 import { StatusCodes } from 'http-status-codes';
 import {
